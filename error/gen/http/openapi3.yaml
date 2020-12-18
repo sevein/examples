@@ -36,7 +36,7 @@ paths:
         example: 0.841081188964521
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -45,7 +45,7 @@ paths:
                 format: double
               example: 0.04845026310987674
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
@@ -55,7 +55,7 @@ paths:
                 message: Value of ID must be an integer
                 name: bad_request
         "504":
-          description: ""
+          description: Gateway Timeout response.
           content:
             application/vnd.goa.error:
               schema:
@@ -93,7 +93,7 @@ paths:
         example: 3219628185476174303
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             application/json:
               schema:
@@ -102,7 +102,7 @@ paths:
                 format: int64
               example: 3100890898189865870
         "400":
-          description: ""
+          description: Bad Request response.
           content:
             application/vnd.goa.error:
               schema:
@@ -112,7 +112,7 @@ paths:
                 message: Value of ID must be an integer
                 name: bad_request
         "417":
-          description: ""
+          description: Expectation Failed response.
           content:
             application/vnd.goa.error:
               schema:
@@ -122,7 +122,7 @@ paths:
                 message: Value of ID must be an integer
                 name: bad_request
         "504":
-          description: ""
+          description: Gateway Timeout response.
           content:
             application/vnd.goa.error:
               schema:

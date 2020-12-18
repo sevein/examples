@@ -34,7 +34,7 @@ paths:
         example: Minus provident asperiores accusantium nesciunt ut tempore.
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             text/html:
               schema:
@@ -142,7 +142,7 @@ paths:
         example: Tempora est.
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             text/html:
               schema:
@@ -224,7 +224,7 @@ paths:
         example: Maiores eaque ab veritatis voluptatem dignissimos.
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             text/html:
               schema:
@@ -258,7 +258,7 @@ paths:
         example: Non exercitationem ullam aut.
       responses:
         "200":
-          description: ""
+          description: OK response.
           content:
             text/html:
               schema:
