@@ -75,6 +75,33 @@ message SubscribeResponse {
 	string action = 2;
 	// Time at which the message was added
 	string added_at = 3;
+	oneof details {
+		PackageCreatedEvent package_created = 4;
+		PackageDeletedEvent package_deleted = 5;
+		PackageUpdatedEvent package_updated = 6;
+	}
+}
+
+message PackageCreatedEvent {
+	// Identifier of package
+	sint32 id = 1;
+	Item item = 2;
+}
+
+message Item {
+	optional string description = 1;
+}
+
+message PackageDeletedEvent {
+	// Identifier of package
+	sint32 id = 1;
+	Item item_deleted = 2;
+}
+
+message PackageUpdatedEvent {
+	// Identifier of package
+	sint32 id = 1;
+	Item item = 2;
 }
 
 message HistoryRequest {

@@ -257,5 +257,38 @@ var Event = Type("Event", func() {
 	Field(3, "added_at", String, "Time at which the message was added", func() {
 		Format(FormatDateTime)
 	})
+	OneOf("details", func() {
+		Field(4, "package_created", PackageCreatedEvent)
+		Field(5, "package_deleted", PackageDeletedEvent)
+		Field(6, "package_updated", PackageUpdatedEvent)
+	})
 	Required("message", "action", "added_at")
+})
+
+var Item = Type("Item", func() {
+	Field(1, "description", String)
+})
+
+// PackageCreatedEvent is included in the OpenAPI schema.
+var PackageCreatedEvent = Type("PackageCreatedEvent", func() {
+	Field(1, "id", Int, "Identifier of package")
+	Field(2, "item", Item)
+	Required("id")
+	Meta("type:generate:force")
+})
+
+// PackageDeletedEvent is included in the OpenAPI schema.
+var PackageDeletedEvent = Type("PackageDeletedEvent", func() {
+	Field(1, "id", Int, "Identifier of package")
+	Field(2, "item_deleted", Item)
+	Required("id")
+	Meta("type:generate:force")
+})
+
+// PackageUpdatedEvent is ___NOT___ included in the OpenAPI schema.
+var PackageUpdatedEvent = Type("PackageUpdatedEvent", func() {
+	Field(1, "id", Int, "Identifier of package")
+	Field(2, "item", Item)
+	Required("id")
+	Meta("type:generate:force")
 })

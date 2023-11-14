@@ -8,6 +8,8 @@
 package server
 
 import (
+	"encoding/json"
+
 	chatter "goa.design/examples/streaming/gen/chatter"
 	chatterviews "goa.design/examples/streaming/gen/chatter/views"
 )
@@ -24,6 +26,15 @@ type SubscribeResponseBody struct {
 	Action  string `form:"action" json:"action" xml:"action"`
 	// Time at which the message was added
 	AddedAt string `form:"added_at" json:"added_at" xml:"added_at"`
+	Details *struct {
+		// Union type name, one of:
+		// - "package_created"
+		// - "package_deleted"
+		// - "package_updated"
+		Type string `form:"Type" json:"Type" xml:"Type"`
+		// JSON encoded union value
+		Value string `form:"Value" json:"Value" xml:"Value"`
+	} `form:"details,omitempty" json:"details,omitempty" xml:"details,omitempty"`
 }
 
 // HistoryResponseBodyTiny is the type of the "chatter" service "history"
@@ -71,6 +82,30 @@ func NewSubscribeResponseBody(res *chatter.Event) *SubscribeResponseBody {
 		Message: res.Message,
 		Action:  res.Action,
 		AddedAt: res.AddedAt,
+	}
+	if res.Details != nil {
+		js, _ := json.Marshal(res.Details)
+		var name string
+		switch res.Details.(type) {
+		case *chatter.PackageCreatedEvent:
+			name = "package_created"
+		case *chatter.PackageDeletedEvent:
+			name = "package_deleted"
+		case *chatter.PackageUpdatedEvent:
+			name = "package_updated"
+		}
+		body.Details = &struct {
+			// Union type name, one of:
+			// - "package_created"
+			// - "package_deleted"
+			// - "package_updated"
+			Type string `form:"Type" json:"Type" xml:"Type"`
+			// JSON encoded union value
+			Value string `form:"Value" json:"Value" xml:"Value"`
+		}{
+			Type:  name,
+			Value: string(js),
+		}
 	}
 	return body
 }

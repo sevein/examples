@@ -134,6 +134,16 @@ func NewProtoSubscribeResponse(result *chatter.Event) *chatterpb.SubscribeRespon
 		Action:   result.Action,
 		AddedAt:  result.AddedAt,
 	}
+	if result.Details != nil {
+		switch src := result.Details.(type) {
+		case *chatter.PackageCreatedEvent:
+			message.Details = &chatterpb.SubscribeResponse_PackageCreated{PackageCreated: svcChatterPackageCreatedEventToChatterpbPackageCreatedEvent(src)}
+		case *chatter.PackageDeletedEvent:
+			message.Details = &chatterpb.SubscribeResponse_PackageDeleted{PackageDeleted: svcChatterPackageDeletedEventToChatterpbPackageDeletedEvent(src)}
+		case *chatter.PackageUpdatedEvent:
+			message.Details = &chatterpb.SubscribeResponse_PackageUpdated{PackageUpdated: svcChatterPackageUpdatedEventToChatterpbPackageUpdatedEvent(src)}
+		}
+	}
 	return message
 }
 
@@ -142,6 +152,16 @@ func NewProtoEventSubscribeResponse(result *chatter.Event) *chatterpb.SubscribeR
 		Message_: result.Message,
 		Action:   result.Action,
 		AddedAt:  result.AddedAt,
+	}
+	if result.Details != nil {
+		switch src := result.Details.(type) {
+		case *chatter.PackageCreatedEvent:
+			v.Details = &chatterpb.SubscribeResponse_PackageCreated{PackageCreated: svcChatterPackageCreatedEventToChatterpbPackageCreatedEvent(src)}
+		case *chatter.PackageDeletedEvent:
+			v.Details = &chatterpb.SubscribeResponse_PackageDeleted{PackageDeleted: svcChatterPackageDeletedEventToChatterpbPackageDeletedEvent(src)}
+		case *chatter.PackageUpdatedEvent:
+			v.Details = &chatterpb.SubscribeResponse_PackageUpdated{PackageUpdated: svcChatterPackageUpdatedEventToChatterpbPackageUpdatedEvent(src)}
+		}
 	}
 	return v
 }
@@ -179,4 +199,114 @@ func NewProtoChatSummaryViewHistoryResponse(vresult *chatterviews.ChatSummaryVie
 		v.Length = &length
 	}
 	return v
+}
+
+// svcChatterPackageCreatedEventToChatterpbPackageCreatedEvent builds a value
+// of type *chatterpb.PackageCreatedEvent from a value of type
+// *chatter.PackageCreatedEvent.
+func svcChatterPackageCreatedEventToChatterpbPackageCreatedEvent(v *chatter.PackageCreatedEvent) *chatterpb.PackageCreatedEvent {
+	res := &chatterpb.PackageCreatedEvent{
+		Id: int32(v.ID),
+	}
+	if v.Item != nil {
+		res.Item = svcChatterItemToChatterpbItem(v.Item)
+	}
+
+	return res
+}
+
+// svcChatterItemToChatterpbItem builds a value of type *chatterpb.Item from a
+// value of type *chatter.Item.
+func svcChatterItemToChatterpbItem(v *chatter.Item) *chatterpb.Item {
+	if v == nil {
+		return nil
+	}
+	res := &chatterpb.Item{
+		Description: v.Description,
+	}
+
+	return res
+}
+
+// svcChatterPackageDeletedEventToChatterpbPackageDeletedEvent builds a value
+// of type *chatterpb.PackageDeletedEvent from a value of type
+// *chatter.PackageDeletedEvent.
+func svcChatterPackageDeletedEventToChatterpbPackageDeletedEvent(v *chatter.PackageDeletedEvent) *chatterpb.PackageDeletedEvent {
+	res := &chatterpb.PackageDeletedEvent{
+		Id: int32(v.ID),
+	}
+	if v.ItemDeleted != nil {
+		res.ItemDeleted = svcChatterItemToChatterpbItem(v.ItemDeleted)
+	}
+
+	return res
+}
+
+// svcChatterPackageUpdatedEventToChatterpbPackageUpdatedEvent builds a value
+// of type *chatterpb.PackageUpdatedEvent from a value of type
+// *chatter.PackageUpdatedEvent.
+func svcChatterPackageUpdatedEventToChatterpbPackageUpdatedEvent(v *chatter.PackageUpdatedEvent) *chatterpb.PackageUpdatedEvent {
+	res := &chatterpb.PackageUpdatedEvent{
+		Id: int32(v.ID),
+	}
+	if v.Item != nil {
+		res.Item = svcChatterItemToChatterpbItem(v.Item)
+	}
+
+	return res
+}
+
+// protobufChatterpbPackageCreatedEventToChatterPackageCreatedEvent builds a
+// value of type *chatter.PackageCreatedEvent from a value of type
+// *chatterpb.PackageCreatedEvent.
+func protobufChatterpbPackageCreatedEventToChatterPackageCreatedEvent(v *chatterpb.PackageCreatedEvent) *chatter.PackageCreatedEvent {
+	res := &chatter.PackageCreatedEvent{
+		ID: int(v.Id),
+	}
+	if v.Item != nil {
+		res.Item = protobufChatterpbItemToChatterItem(v.Item)
+	}
+
+	return res
+}
+
+// protobufChatterpbItemToChatterItem builds a value of type *chatter.Item from
+// a value of type *chatterpb.Item.
+func protobufChatterpbItemToChatterItem(v *chatterpb.Item) *chatter.Item {
+	if v == nil {
+		return nil
+	}
+	res := &chatter.Item{
+		Description: v.Description,
+	}
+
+	return res
+}
+
+// protobufChatterpbPackageDeletedEventToChatterPackageDeletedEvent builds a
+// value of type *chatter.PackageDeletedEvent from a value of type
+// *chatterpb.PackageDeletedEvent.
+func protobufChatterpbPackageDeletedEventToChatterPackageDeletedEvent(v *chatterpb.PackageDeletedEvent) *chatter.PackageDeletedEvent {
+	res := &chatter.PackageDeletedEvent{
+		ID: int(v.Id),
+	}
+	if v.ItemDeleted != nil {
+		res.ItemDeleted = protobufChatterpbItemToChatterItem(v.ItemDeleted)
+	}
+
+	return res
+}
+
+// protobufChatterpbPackageUpdatedEventToChatterPackageUpdatedEvent builds a
+// value of type *chatter.PackageUpdatedEvent from a value of type
+// *chatterpb.PackageUpdatedEvent.
+func protobufChatterpbPackageUpdatedEventToChatterPackageUpdatedEvent(v *chatterpb.PackageUpdatedEvent) *chatter.PackageUpdatedEvent {
+	res := &chatter.PackageUpdatedEvent{
+		ID: int(v.Id),
+	}
+	if v.Item != nil {
+		res.Item = protobufChatterpbItemToChatterItem(v.Item)
+	}
+
+	return res
 }

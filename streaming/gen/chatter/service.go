@@ -172,6 +172,9 @@ type Event struct {
 	Action  string
 	// Time at which the message was added
 	AddedAt string
+	Details interface {
+		detailsVal()
+	}
 }
 
 // HistoryPayload is the payload type of the chatter service history method.
@@ -180,6 +183,10 @@ type HistoryPayload struct {
 	Token string
 	// View to use to render the result
 	View *string
+}
+
+type Item struct {
+	Description *string
 }
 
 // ListenerPayload is the payload type of the chatter service listener method.
@@ -192,6 +199,24 @@ type ListenerPayload struct {
 type LoginPayload struct {
 	User     string
 	Password string
+}
+
+type PackageCreatedEvent struct {
+	// Identifier of package
+	ID   int
+	Item *Item
+}
+
+type PackageDeletedEvent struct {
+	// Identifier of package
+	ID          int
+	ItemDeleted *Item
+}
+
+type PackageUpdatedEvent struct {
+	// Identifier of package
+	ID   int
+	Item *Item
 }
 
 // SubscribePayload is the payload type of the chatter service subscribe method.
@@ -244,6 +269,9 @@ func (e Unauthorized) ErrorName() string {
 func (e Unauthorized) GoaErrorName() string {
 	return "unauthorized"
 }
+func (*PackageCreatedEvent) detailsVal() {}
+func (*PackageDeletedEvent) detailsVal() {}
+func (*PackageUpdatedEvent) detailsVal() {}
 
 // NewChatSummaryCollection initializes result type ChatSummaryCollection from
 // viewed result type ChatSummaryCollection.

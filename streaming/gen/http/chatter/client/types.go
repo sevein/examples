@@ -8,6 +8,8 @@
 package client
 
 import (
+	"encoding/json"
+
 	chatter "goa.design/examples/streaming/gen/chatter"
 	chatterviews "goa.design/examples/streaming/gen/chatter/views"
 	goa "goa.design/goa/v3/pkg"
@@ -25,6 +27,15 @@ type SubscribeResponseBody struct {
 	Action  *string `form:"action,omitempty" json:"action,omitempty" xml:"action,omitempty"`
 	// Time at which the message was added
 	AddedAt *string `form:"added_at,omitempty" json:"added_at,omitempty" xml:"added_at,omitempty"`
+	Details *struct {
+		// Union type name, one of:
+		// - "package_created"
+		// - "package_deleted"
+		// - "package_updated"
+		Type *string `form:"Type" json:"Type" xml:"Type"`
+		// JSON encoded union value
+		Value *string `form:"Value" json:"Value" xml:"Value"`
+	} `form:"details,omitempty" json:"details,omitempty" xml:"details,omitempty"`
 }
 
 // HistoryResponseBody is the type of the "chatter" service "history" endpoint
@@ -123,6 +134,22 @@ func NewSubscribeEventOK(body *SubscribeResponseBody) *chatter.Event {
 		Action:  *body.Action,
 		AddedAt: *body.AddedAt,
 	}
+	if body.Details != nil {
+		switch *body.Details.Type {
+		case "package_created":
+			var val *chatter.PackageCreatedEvent
+			json.Unmarshal([]byte(*body.Details.Value), &val)
+			v.Details = val
+		case "package_deleted":
+			var val *chatter.PackageDeletedEvent
+			json.Unmarshal([]byte(*body.Details.Value), &val)
+			v.Details = val
+		case "package_updated":
+			var val *chatter.PackageUpdatedEvent
+			json.Unmarshal([]byte(*body.Details.Value), &val)
+			v.Details = val
+		}
+	}
 
 	return v
 }
@@ -190,6 +217,19 @@ func ValidateSubscribeResponseBody(body *SubscribeResponseBody) (err error) {
 	}
 	if body.AddedAt != nil {
 		err = goa.MergeErrors(err, goa.ValidateFormat("body.added_at", *body.AddedAt, goa.FormatDateTime))
+	}
+	if body.Details != nil {
+		if body.Details.Type == nil {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Type", "body.details"))
+		}
+		if body.Details.Value == nil {
+			err = goa.MergeErrors(err, goa.MissingFieldError("Value", "body.details"))
+		}
+		if body.Details.Type != nil {
+			if !(*body.Details.Type == "package_created" || *body.Details.Type == "package_deleted" || *body.Details.Type == "package_updated") {
+				err = goa.MergeErrors(err, goa.InvalidEnumValueError("body.details.Type", *body.Details.Type, []any{"package_created", "package_deleted", "package_updated"}))
+			}
+		}
 	}
 	return
 }
