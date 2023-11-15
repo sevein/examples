@@ -275,6 +275,7 @@ var PackageCreatedEvent = Type("PackageCreatedEvent", func() {
 	Field(2, "item", Item)
 	Required("id")
 	Meta("type:generate:force")
+	Meta("openapi:typename", "PackageCreatedEvent")
 })
 
 // PackageDeletedEvent is included in the OpenAPI schema.
@@ -283,6 +284,7 @@ var PackageDeletedEvent = Type("PackageDeletedEvent", func() {
 	Field(2, "item_deleted", Item)
 	Required("id")
 	Meta("type:generate:force")
+	Meta("openapi:typename", "PackageDeletedEvent")
 })
 
 // PackageUpdatedEvent is ___NOT___ included in the OpenAPI schema.
@@ -291,4 +293,5 @@ var PackageUpdatedEvent = Type("PackageUpdatedEvent", func() {
 	Field(2, "item", Item)
 	Required("id")
 	Meta("type:generate:force")
+	Meta("openapi:typename", "PackageUpdatedEvent")
 })
